@@ -1,0 +1,35 @@
+@startuml
+
+class RSSFlux {
+    - refreshTime : number
+    - source : string
+    + getRefreshTime() : number
+    + getSource() : string
+    + RSSFlux(source : string, refreshTime : number)
+}
+
+abstract RSSHandler {
+    + rssFlux : RSSFlux
+    + eventName : string
+    + webhook : string
+    + webhookHostname : string
+    + webhookPath : string
+    + getFlux() : RSSFlux
+    + getEventName() : string
+    + {abstract} action(item)
+}
+
+class RSSHandlerDefault {
+    + setOutcomingData(item) 
+    + action(item)
+}
+
+RSSHandler -o RSSFlux
+RSSHandlerDefault -|> RSSHandler
+
+class RSSFeedEmitter {
+    + add(url: string, refresh: number)
+    + on(eventName: string, callback: function)
+}
+
+@enduml

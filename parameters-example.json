@@ -1,0 +1,21 @@
+[
+    {
+        "flux": "rss_url_1",
+        "refreshTime" : 2000,
+        "webhook" : "webhook_url_1",
+        "type" : "default"
+    },
+    {
+        "flux": "rss_url_2",
+        "refreshTime" : 2000,
+        "webhook" : "webhook_url_2",
+        "type" : "default"
+    },
+    ...
+    {
+        "flux": "rss_url_N",
+        "refreshTime" : 2000,
+        "webhook" : "webhook_url_N",
+        "type" : "default"
+    }
+]
