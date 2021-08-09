@@ -1,5 +1,6 @@
-const { log } = require('console');
 const https = require('https');
+
+const logSys = require('./logSys');
 
 /*
  * Abstract class to handle rss flux on update
@@ -9,7 +10,7 @@ class RSSHandler {
     /*
     * This method will be excuted on each update on the flux
     */
-    action(item) {}
+    action(item) { }
 
     /*
      * Returns the flux attached to this handler
@@ -44,10 +45,10 @@ class RSSHandler {
         // Get hostname and path from webhook url
         let re = new RegExp('^(?:(?:http|https):\/\/)([a-zA-Z.0-9]*)(\/*[a-zA-Z0-9.\/\\_-]*)$');
         let match = this.webhook.match(re);
-        
+
         if (match) {
             this.webhookHostname = match[1];
-            
+
             if (match[2] != '') {
                 this.webhookPath = match[2];
             } else {
@@ -77,27 +78,34 @@ class RSSHandlerDefault extends RSSHandler {
             path: this.webhookPath,
             method: 'POST',
             headers: {
-              'Content-Type': 'application/json',
-              'Content-Length': data.length
+                'Content-Type': 'application/json',
+                'Content-Length': data.length
             }
-          };
+        };
 
         const req = https.request(options, res => {
-            console.log(`statusCode: ${res.statusCode}`);
+            // log it
+            let msg = '';
+            if (res.statusCode == 429) {
+                msg = `${this.getFlux().getSource()}, status ${res.statusCode} => retry in few seconds`;
+            } else {
+                msg = `${this.getFlux().getSource()}, status ${res.statusCode}`;
+            }
+            logSys.log(msg);
 
             res.on('data', d => {
-                //process.stdout.write(d);
                 d = JSON.parse(d)
+
                 if (res.statusCode == 429) { // 429 : Too Many Request
-                    setTimeout(() => {this.action(item);}, d.retry_after);
+                    setTimeout(() => { this.action(item); }, d.retry_after);
                 }
             });
         });
-        
-            req.on('error', error => {
+
+        req.on('error', error => {
             console.error(error);
         });
-        
+
         req.write(data);
         req.end();
     }
