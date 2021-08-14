@@ -70,7 +70,7 @@ class RSSHandlerDefault extends RSSHandler {
     }
 
     action(item) {
-        const data = JSON.stringify(this.setOutcomingData(item))
+        const data = JSON.stringify(this.setOutcomingData(item));
 
         const options = {
             hostname: this.webhookHostname,
@@ -85,16 +85,10 @@ class RSSHandlerDefault extends RSSHandler {
 
         const req = https.request(options, res => {
             // log it
-            let msg = '';
-            if (res.statusCode == 429) {
-                msg = `${this.getFlux().getSource()}, status ${res.statusCode} => retry in few seconds`;
-            } else {
-                msg = `${this.getFlux().getSource()}, status ${res.statusCode}`;
-            }
-            logSys.log(msg);
+            logSys.log(`${this.getFlux().getSource()}, ${item.title}, status ${res.statusCode}`);
 
             res.on('data', d => {
-                d = JSON.parse(d)
+                d = JSON.parse(d);
 
                 if (res.statusCode == 429) { // 429 : Too Many Request
                     setTimeout(() => { this.action(item); }, d.retry_after);
@@ -102,9 +96,7 @@ class RSSHandlerDefault extends RSSHandler {
             });
         });
 
-        req.on('error', error => {
-            console.error(error);
-        });
+        req.on('error', logSys.err);
 
         req.write(data);
         req.end();
