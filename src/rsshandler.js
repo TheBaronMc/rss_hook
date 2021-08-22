@@ -2,6 +2,14 @@ const https = require('https');
 
 const logSys = require('./logSys');
 
+const { History } = require('./history');
+
+
+function getHostname(url) {
+    let re = new RegExp('^(?:(?:http|https):\/\/)([a-zA-Z.0-9]*)(\/*[a-zA-Z0-9.\/\\_-]*)$');
+    return url.match(re);
+}
+
 /*
  * Abstract class to handle rss flux on update
  */
@@ -43,8 +51,7 @@ class RSSHandler {
         this.eventName = eventName;
 
         // Get hostname and path from webhook url
-        let re = new RegExp('^(?:(?:http|https):\/\/)([a-zA-Z.0-9]*)(\/*[a-zA-Z0-9.\/\\_-]*)$');
-        let match = this.webhook.match(re);
+        let match = getHostname(this.webhook);
 
         if (match) {
             this.webhookHostname = match[1];
@@ -72,6 +79,10 @@ class RSSHandlerDefault extends RSSHandler {
     action(item) {
         const data = JSON.stringify(this.setOutcomingData(item));
 
+        if (this.history.exist(getHostname(this.getFlux().getSource())[1], item.title)) {
+            return;
+        }
+
         const options = {
             hostname: this.webhookHostname,
             port: 443,
@@ -87,11 +98,19 @@ class RSSHandlerDefault extends RSSHandler {
             // log it
             logSys.log(`${this.getFlux().getSource()}, ${item.title}, status ${res.statusCode}`);
 
-            res.on('data', d => {
-                d = JSON.parse(d);
+            if (res.statusCode < 299) {
+                // Put it into history
+                this.history.add(getHostname(this.getFlux().getSource())[1], item.title);
+            }
 
-                if (res.statusCode == 429) { // 429 : Too Many Request
-                    setTimeout(() => { this.action(item); }, d.retry_after);
+            res.on('data', d => {
+                try {
+                    d = JSON.parse(d);
+                    if (res.statusCode == 429) { // 429 : Too Many Request
+                        setTimeout(() => { this.action(item); }, d.retry_after);
+                    }
+                } catch (err) {
+                    logSys.err(err);
                 }
             });
         });
@@ -100,6 +119,11 @@ class RSSHandlerDefault extends RSSHandler {
 
         req.write(data);
         req.end();
+    }
+
+    constructor(webhook, rssFlux, eventName = 'new-item') {
+        super(webhook, rssFlux, eventName);
+        this.history = new History();
     }
 }
 
