@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/TheBaronMc/rss_hook#readme",
   "dependencies": {
+    "argparse": "^2.0.1",
     "rss-feed-emitter": "^3.2.2"
   }
 }
