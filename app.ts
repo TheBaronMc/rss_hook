@@ -1,11 +1,12 @@
-// IMPORT
-const RssFeedEmitter = require('rss-feed-emitter');
-const { ArgumentParser } = require('argparse');
-const { stat, readFileSync } = require('fs');
+// IMPORT TS
+import { ArgumentParser } from "argparse";
+import { stat, readFileSync } from 'fs';
 
-const { RSSFlux } = require('./src/rssflux');
-const { RSSHandler, RSSHandlerDefault} = require('./src/rsshandler');
-const { info } = require('console');
+import { RSSFlux } from './src/rssflux';
+import { RSSHandlerDefault} from './src/rsshandler'
+
+// IMPORTS JS
+const RssFeedEmitter = require('rss-feed-emitter');
 
 // FUNCTION
 function checkExist(path) {
@@ -30,7 +31,7 @@ const parser = new ArgumentParser({
 
 parser.add_argument('-f', '--conf_file', { help:'path to parameters.json'});
 
-args = parser.parse_args();
+let args = parser.parse_args();
 
 if (args.conf_file) {
     checkExist(args.conf_file);
