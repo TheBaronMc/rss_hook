@@ -1,0 +1,7 @@
+{
+    "webhooks": [
+        { "url": "", "flux": [
+            { "url": "", "refreshTime": 2000 }
+        ]}
+    ]
+}
