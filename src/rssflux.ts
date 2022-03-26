@@ -4,10 +4,12 @@ import RssFeedEmitter from 'rss-feed-emitter';
  * Define an RSS flux with source url and a refresh time
  */
 export class RSSFlux {
-    private static feeder = new RssFeedEmitter();
+    //private static feeder = new RssFeedEmitter();
+    private feeder = new RssFeedEmitter();
     private url: string = '';
     private eventName: string = '';
     private refreshTime: number = 2000;
+    private callback: any;
 
     /*
      * Constructor
@@ -18,9 +20,10 @@ export class RSSFlux {
     constructor(url: string, refreshTime: number = 2000) {
         this.url = url;
         this.refreshTime = refreshTime;
-        this.eventName = this.randomEventName();
+        this.eventName = getRandomString();
 
-        this.addToFeeder((data:any) => {});
+        //this.callback = (data:any) => {};
+        //this.addToFeeder(this.callback);
     }
 
     /*
@@ -29,31 +32,38 @@ export class RSSFlux {
      * @param {Function} f function which will be execute on update
      */
     public onUpdate(f: Function) {
+        this.callback = f;
         this.removeFromFeeder();
-        this.addToFeeder(f);
+        this.addToFeeder(this.callback);
     }
 
     private addToFeeder(f: Function) {
-        RSSFlux.feeder.add({
+        this.feeder.add({
             url: this.url,
             refresh: this.refreshTime,
             eventName: this.eventName
         });
 
-        RSSFlux.feeder.on(this.eventName, (data:any) => { f(data) });
+        this.feeder.on(this.eventName, (data:any) => { f(data) });
     }
 
     private removeFromFeeder() {
-        RSSFlux.feeder.remove(this.url);
+        //RSSFlux.feeder.remove(this.url);
+        this.feeder.removeListener(this.eventName, this.callback)
+        console.log(this.callback);
+        
+        
+        
+        //RSSFlux.feeder.removeAllListeners(this.eventName);
+    }
+}
+
+function getRandomString(): string {
+    let str = '';
+
+    for (let i=0; i<100; i++) {
+        str += (Math.random() * 250).toString();
     }
 
-    private randomEventName(): string {
-        let eventName = '';
-
-        for (let i=0; i<100; i++) {
-            eventName += (Math.random() * 250).toString();
-        }
-
-        return eventName;
-    }
+    return str;
 }
