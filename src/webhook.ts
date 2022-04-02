@@ -1,12 +1,25 @@
 import axios from "axios";
 
+/*
+ * Define an webhook with source url
+ */
 export class Webhook {
     private url: string;
 
+    /*
+     * Constructor
+     *
+     * @param {string} source url of webhook
+     */
     public constructor(url: string) {
         this.url = url;
     }
 
+    /*
+     * send
+     *
+     * @param {string} data to send to the webhook
+     */
     public async send(data: any) {
         let sended: boolean = false;
         let dataModel: any = { 
