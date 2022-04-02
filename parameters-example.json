@@ -1,21 +1,7 @@
-[
-    {
-        "flux": "rss_url_1",
-        "refreshTime" : 2000,
-        "webhook" : "webhook_url_1",
-        "event" : "event_1"
-    },
-    {
-        "flux": "rss_url_2",
-        "refreshTime" : 2000,
-        "webhook" : "webhook_url_2",
-        "event" : "event_2"
-    },
-    ...
-    {
-        "flux": "rss_url_N",
-        "refreshTime" : 2000,
-        "webhook" : "webhook_url_N",
-        "event" : "event_N"
-    }
-]
+{
+    "webhooks": [
+        { "url": "", "flux": [
+            { "url": "", "refreshTime": 2000 }
+        ]}
+    ]
+}
