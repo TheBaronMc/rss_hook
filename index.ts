@@ -1,5 +1,5 @@
 import { ArgumentParser } from 'argparse';
-import { stat, readFileSync } from 'fs';
+import { readFileSync } from 'fs';
 
 import { RSSFlux } from './src/rssflux';
 import { RSSHandler } from './src/rsshandler';

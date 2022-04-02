@@ -1,35 +1,72 @@
 @startuml
 
+class WebhookUnknown extends Exception {}
+class RSSFluxUnknown extends Exception {}
+
+class Webhook {
+- url: string
++ Webhook(url: string)
++ send(data: string)
+}
+
 class RSSFlux {
-    - refreshTime : number
-    - source : string
-    + getRefreshTime() : number
-    + getSource() : string
-    + RSSFlux(source : string, refreshTime : number)
+- {static} feeder: RssFeedEmitter
+- url: string
+- eventName: string
++ RSSFlux(url: string, refreshTime: int = 2000)
++ onUpdate(callback: function)
++ removeOnUpdate(callback: function)
 }
 
-abstract RSSHandler {
-    + rssFlux : RSSFlux
-    + eventName : string
-    + webhook : string
-    + webhookHostname : string
-    + webhookPath : string
-    + getFlux() : RSSFlux
-    + getEventName() : string
-    + {abstract} action(item)
+class RSSHandler {
++ RSSHandler()
++ pair(flux: RSSFlux, webhook: Webhook)
++ unpair(flux: RSSFlux, webhook: Webhook)
++ unpairAllFrom(flux: RSSFlux)
++ unpairAll()
 }
 
-class RSSHandlerDefault {
-    + setOutcomingData(item) 
-    + action(item)
-}
+RSSFlux o-- RSSHandler
+Webhook o-- RSSHandler
 
-RSSHandler -o RSSFlux
-RSSHandlerDefault -|> RSSHandler
+RSSHandler --> WebhookUnknown : throw
+RSSHandler --> RSSFluxUnknown : throw
 
-class RSSFeedEmitter {
-    + add(url: string, refresh: number)
-    + on(eventName: string, callback: function)
+note left of RSSFlux::RSSFlux
+...
+feeder.add({
+  url: this.url,
+  refresh: refreshTime,
+  eventName: this.eventName
+});
+...
+end note
+
+note left of RSSFlux::onUpdate
+onUpdate(f: function) {
+  f(data)
 }
+end note
+
+note left of RSSHandler::pair
+unpair(flux: RSSFlux, webhook: Webhook) {
+  ...
+  function f(data) {}
+  flux.onUpdate(f)
+  ...
+}
+end note
+
+note left of RSSHandler::unpair
+unpair(flux: RSSFlux, webhook: Webhook) {
+  ...
+  function f(data) {
+     webhook.send(data)
+  }
+  flux.onUpdate(f)
+  ...
+}
+end note
+
 
 @enduml

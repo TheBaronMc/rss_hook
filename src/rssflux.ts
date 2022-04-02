@@ -5,11 +5,10 @@ import RssFeedEmitter from 'rss-feed-emitter';
  */
 export class RSSFlux {
     //private static feeder = new RssFeedEmitter();
-    private feeder = new RssFeedEmitter();
-    private url: string = '';
-    private eventName: string = '';
-    private refreshTime: number = 2000;
-    private callback: any;
+    
+    private static feeder: RssFeedEmitter = new RssFeedEmitter();
+    private url: string;
+    private eventName: string;
 
     /*
      * Constructor
@@ -19,42 +18,31 @@ export class RSSFlux {
      */
     constructor(url: string, refreshTime: number = 2000) {
         this.url = url;
-        this.refreshTime = refreshTime;
         this.eventName = getRandomString();
 
-        //this.callback = (data:any) => {};
-        //this.addToFeeder(this.callback);
+        RSSFlux.feeder.add({
+            url: this.url,
+            refresh: refreshTime,
+            eventName: this.eventName
+        })
     }
 
     /*
      * onUpdate
      *
-     * @param {Function} f function which will be execute on update
+     * @param {Function} callback function which will be execute on update
      */
-    public onUpdate(f: Function) {
-        this.callback = f;
-        this.removeFromFeeder();
-        this.addToFeeder(this.callback);
+    public onUpdate(callback: Function) {
+        RSSFlux.feeder.on(this.eventName, <any>callback);
     }
 
-    private addToFeeder(f: Function) {
-        this.feeder.add({
-            url: this.url,
-            refresh: this.refreshTime,
-            eventName: this.eventName
-        });
-
-        this.feeder.on(this.eventName, (data:any) => { f(data) });
-    }
-
-    private removeFromFeeder() {
-        //RSSFlux.feeder.remove(this.url);
-        this.feeder.removeListener(this.eventName, this.callback)
-        console.log(this.callback);
-        
-        
-        
-        //RSSFlux.feeder.removeAllListeners(this.eventName);
+    /*
+     * removeOnUpate
+     *
+     * @param {Function} callback function which will be remove if it exists
+     */
+    public removeOnUpate(callback: Function) {
+        RSSFlux.feeder.removeListener(this.eventName, <any>callback);
     }
 }
 
