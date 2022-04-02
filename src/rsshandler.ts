@@ -97,7 +97,7 @@ export class RSSHandler {
         let nbFluxAssociated: number = 0;
 
         for (let flux of this.data.keys()) {
-            if (this.data.get(flux).includes(webhook)) {
+            if (this.data.get(flux)?.includes(webhook)) {
                 this.unpair(flux, webhook);
                 nbFluxAssociated++;
             }

@@ -9,7 +9,7 @@ This project aims to connect one or more [RSS flux](https://en.wikipedia.org/wik
 ### Prerequisites
 
 To use **RSS Hook** you need to :
-+ Have nodejs 12 installed. You can do it via [nvm](https://github.com/nvm-sh/nvm).
++ Have nodejs 16 installed. You can do it via [nvm](https://github.com/nvm-sh/nvm).
 + Know the JSON syntax. You can start from [here](www.json.org)
 
 ### How to launch it
@@ -27,6 +27,6 @@ If everything is ok, now you have to create your own `parameters.json` in which 
 Finally, you can start the app with the following command :
 
 ``` shell
-node index.js -f parameters.json
+npm run server
 ```
 By default, if you don't specify a parameters file, it will look for a file named `parameters.json` in the current directory.
