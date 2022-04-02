@@ -8,16 +8,27 @@ export class Webhook {
     }
 
     public async send(data: any) {
-        let d: any = { content: 'New article', embeds: [{ title: data.title, type: 'rich', description: data.description, url: data.link }] };
+        let sended: boolean = false;
+        let dataModel: any = { 
+            content: 'New content',
+            embeds: [
+                { 
+                    title: data.title,
+                    type: 'rich',
+                    description: data.description,
+                    url: data.link 
+                }
+            ]
+        };
 
-        try {
-            let response = await axios.post(this.url, d);
-            console.log(`${data.title}: posted`);
-        } catch (err) {
-            console.log(`${data.title}: error`)
-            await this.sleep(2000);
-            await this.send(data)
-        }       
+        while (!sended) {
+            try {
+                await axios.post(this.url, dataModel);
+                sended = true;
+            } catch (err) {
+                await this.sleep(2000);
+            }
+        }
     }
 
     private sleep(ms: number) {
