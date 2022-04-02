@@ -22,7 +22,8 @@ class RSSHandler {
 + RSSHandler()
 + pair(flux: RSSFlux, webhook: Webhook)
 + unpair(flux: RSSFlux, webhook: Webhook)
-+ unpairAllFrom(flux: RSSFlux)
++ unpairAllFromFlux(flux: RSSFlux)
++ unpairAllFromWebhook(flux: Webhook)
 + unpairAll()
 }
 

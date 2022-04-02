@@ -67,13 +67,13 @@ export class RSSHandler {
     }
 
     /*
-     * unpairAllFrom
+     * unpairAllFromFlux
      *
      * Unpair all webhooks associated with an RSS Flux
      * 
      * @param {RSSFlux} flux
      */
-    public unpairAllFrom(flux: RSSFlux) {
+    public unpairAllFromFlux(flux: RSSFlux) {
         // Check if the flux is known
         let webhook_list: Webhook[] | undefined = this.data.get(flux);
 
@@ -87,6 +87,27 @@ export class RSSHandler {
     }
 
     /*
+     * unpairAllFromWebHook
+     *
+     * Unpair all RSS Flux associated with a webhook
+     * 
+     * @param {RSSFlux} flux
+     */
+    public unpairAllFromWebhook(webhook: Webhook) {
+        let nbFluxAssociated: number = 0;
+
+        for (let flux of this.data.keys()) {
+            if (this.data.get(flux).includes(webhook)) {
+                this.unpair(flux, webhook);
+                nbFluxAssociated++;
+            }
+        }
+
+        if (nbFluxAssociated == 0)
+            throw new WebhookUnknown();
+    }
+
+    /*
      * unpairAll
      *
      * Unpair all webhooks and RSS Flux
@@ -96,7 +117,7 @@ export class RSSHandler {
     public unpairAll() {
         // For each known flux unpair
         for (let flux of this.data.keys()) {
-            this.unpairAllFrom(flux);
+            this.unpairAllFromFlux(flux);
         }
     }
 
