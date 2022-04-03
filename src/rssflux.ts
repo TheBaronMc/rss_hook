@@ -6,7 +6,7 @@ import RssFeedEmitter from 'rss-feed-emitter';
 export class RSSFlux {
     //private static feeder = new RssFeedEmitter();
     
-    private static feeder: RssFeedEmitter = new RssFeedEmitter();
+    private static feeder = new RssFeedEmitter();
     private url: string;
     private eventName: string;
 

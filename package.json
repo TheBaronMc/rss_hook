@@ -4,8 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "dev:server": "nodemon --watch './**/*.ts' --exec 'ts-node' index.ts"
+    "build": "tsc",
+    "clean": "rm -r build",
+    "dev:server": "nodemon --watch './**/*.ts' --exec 'ts-node' index.ts",
+    "server": "node build/index.js -f parameters.json"
   },
   "repository": {
     "type": "git",
