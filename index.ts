@@ -19,13 +19,18 @@ let parameters = JSON.parse(readFileSync(args.conf_file, {encoding:'utf-8'}));
 
 const rss_handler = new RSSHandler();
 
-parameters['webhooks'].forEach((wh: any) => {
-    let webhook: Webhook = new Webhook(wh.url);
+let flux: Map<string,RSSFlux> = new Map<string,RSSFlux>();
 
-    wh['flux'].forEach((fx: any) => {
-        rss_handler.pair(
-            new RSSFlux(fx.url),
-            webhook
-        )
-    });
-});
+for (let f of parameters['flux']) {
+    flux.set(f.name, new RSSFlux(f.url, f.refreshTime));
+}
+
+for (let wh of parameters['webhooks']) {
+    let webhook = new Webhook(wh.url);
+    for (let fluxName of wh.flux) {
+        if (!flux.has(fluxName))
+            throw new Error(`Flux ${fluxName} doesn't exist`);
+        
+        rss_handler.pair(<RSSFlux>flux.get(fluxName), webhook)
+    }
+}

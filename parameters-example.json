@@ -1,7 +1,29 @@
 {
+    "flux": [
+        {
+            "name": "Distrowatch",
+            "url": "https://distrowatch.com/news/dw.xml",
+            "refreshTime": 2000
+        },
+        {
+            "name": "France24",
+            "url": "https://www.france24.com/fr/europe/rss",
+            "refreshTime": 3600
+        },
+        {
+            "name": "Mint",
+            "url": "https://blog.linuxmint.com/?feed=rss2",
+            "refreshTime": 3600
+        }
+    ],
     "webhooks": [
-        { "url": "", "flux": [
-            { "url": "", "refreshTime": 2000 }
-        ]}
+        {
+            "url": "https://discord.com/api/webhooks/.../...", 
+            "flux": ["Distrowatch", "Mint"]
+        },
+        {
+            "url": "https://discord.com/api/webhooks/.../...", 
+            "flux": ["France24"]
+        }
     ]
 }
