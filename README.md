@@ -27,6 +27,6 @@ If everything is ok, now you have to create your own `parameters.json` in which 
 Finally, you can start the app with the following command :
 
 ``` shell
-npm run server
+npm run build  # Build the project
+npm run server # It will take the parameters.json from the current directory
 ```
-By default, if you don't specify a parameters file, it will look for a file named `parameters.json` in the current directory.
